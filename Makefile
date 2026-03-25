@@ -1,21 +1,30 @@
+PYTHON = .venv/bin/python
+PIP = .venv/bin/pip
+
+SRC = testing/princple/src
+TESTS = testing/princple/tests
+
+.PHONY: help venv install test typecheck format lint check
+
 help:
- @echo "This makefile for repo-level activity"
+	@echo "Available targets: venv, install, test, typecheck, format, lint, check"
 
-create-prcatice:
- mkdir demo-prcatice
+venv:
+	python3 -m venv .venv
 
-create-structure:
- mkdir src tests docs
- touch README.md setup.py requirements.txt
- touch docs/DOMAIN.md
- touch src/.gitkeep tests/.gitkeep
+install: venv
+	$(PIP) install -r requirements.txt
 
+test:
+	.venv/bin/pytest $(TESTS)
 
-remove-prcatice:
- rm -rf demo-prcatice
+typecheck:
+	.venv/bin/mypy $(SRC)
 
-#mkdir demo-prcatice
-#mkdir demo-prcatice/src
-#mkdir demo-prcatice/tests
-#mkdir demo-prcatice/docs
-#mkdir demo-prcatice/README.md
+format:
+	.venv/bin/black $(SRC)
+
+lint:
+	.venv/bin/ruff check $(SRC)
+
+check: typecheck lint test
