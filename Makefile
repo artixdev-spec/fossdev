@@ -1,30 +1,36 @@
 PYTHON = .venv/bin/python
 PIP = .venv/bin/pip
+PYTEST = .venv/bin/pytest
+MYPY = .venv/bin/mypy
+RUFF = .venv/bin/ruff
+BLACK = .venv/bin/black
 
-SRC = testing/princple/src
-TESTS = testing/princple/tests
+PROJECT = testing/princple
+SRC = src
+TESTS = tests
 
-.PHONY: help venv install test typecheck format lint check
+.PHONY: help venv install test typecheck format lint check clean
 
 help:
-	@echo "Available targets: venv, install, test, typecheck, format, lint, check"
+	@echo "Available targets: venv, install, test, typecheck, format, lint, check, clean"
 
 venv:
 	python3 -m venv .venv
 
 install: venv
+	$(PIP) install --upgrade pip
 	$(PIP) install -r requirements.txt
 
 test:
-	.venv/bin/pytest $(TESTS)
+	cd $(PROJECT) && PYTHONPATH=$(SRC) ../../$(PYTEST) $(TESTS)
 
 typecheck:
-	.venv/bin/mypy $(SRC)
+	cd $(PROJECT) && PYTHONPATH=$(SRC) ../../$(MYPY) --explicit-package-bases --ignore-missing-imports $(SRC) $(TESTS)
 
 format:
-	.venv/bin/black $(SRC)
+	cd $(PROJECT) && ../../$(BLACK) $(SRC) $(TESTS)
 
 lint:
-	.venv/bin/ruff check $(SRC)
+	cd $(PROJECT) && PYTHONPATH=$(SRC) ../../$(RUFF) check $(SRC) $(TESTS)
 
 check: typecheck lint test
