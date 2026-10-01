@@ -1,6 +1,6 @@
 import pytest
 
-from ndfl.calculator import calculate_ndfl
+from ndfl.calculator import TaxpayerType, calculate_ndfl
 
 
 def test_zero_income_gives_zero_tax():
@@ -45,3 +45,33 @@ def test_tax_is_rounded_to_kopecks():
 def test_negative_income_raises():
     with pytest.raises(ValueError):
         calculate_ndfl(-1)
+
+
+def test_general_taxpayer_is_default():
+    assert calculate_ndfl(10_000_000) == calculate_ndfl(
+        10_000_000, TaxpayerType.GENERAL
+    )
+
+
+@pytest.mark.parametrize(
+    "income, expected",
+    [
+        (2_400_000, 312_000),
+        (10_000_000, 312_000 + 7_600_000 * 0.15),
+        (60_000_000, 312_000 + 57_600_000 * 0.15),
+    ],
+)
+def test_investment_income_has_only_two_rates(income, expected):
+    assert calculate_ndfl(income, TaxpayerType.INVESTMENT) == pytest.approx(expected)
+
+
+@pytest.mark.parametrize(
+    "income, expected",
+    [
+        (3_000_000, 3_000_000 * 0.13),
+        (5_000_000, 650_000),
+        (6_000_000, 650_000 + 1_000_000 * 0.15),
+    ],
+)
+def test_northern_taxpayer_has_higher_threshold(income, expected):
+    assert calculate_ndfl(income, TaxpayerType.NORTHERN) == pytest.approx(expected)
