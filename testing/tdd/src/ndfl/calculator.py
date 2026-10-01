@@ -24,4 +24,6 @@ def _tax_by_scale(income: float, scale: Scale) -> float:
 
 
 def calculate_ndfl(income: float) -> float:
+    if income < 0:
+        raise ValueError("Income cannot be negative")
     return round(_tax_by_scale(income, GENERAL_SCALE), 2)
