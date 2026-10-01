@@ -1,12 +1,27 @@
+import math
+
+Scale = list[tuple[float, float]]
+
+# (верхняя граница ступени, ставка) — ставка применяется к части дохода внутри ступени
+GENERAL_SCALE: Scale = [
+    (2_400_000, 0.13),
+    (5_000_000, 0.15),
+    (20_000_000, 0.18),
+    (50_000_000, 0.20),
+    (math.inf, 0.22),
+]
+
+
+def _tax_by_scale(income: float, scale: Scale) -> float:
+    tax = 0.0
+    lower = 0.0
+    for upper, rate in scale:
+        if income <= lower:
+            break
+        tax += (min(income, upper) - lower) * rate
+        lower = upper
+    return tax
+
+
 def calculate_ndfl(income: float) -> float:
-    if income <= 2_400_000:
-        tax = income * 0.13
-    elif income <= 5_000_000:
-        tax = 312_000 + (income - 2_400_000) * 0.15
-    elif income <= 20_000_000:
-        tax = 702_000 + (income - 5_000_000) * 0.18
-    elif income <= 50_000_000:
-        tax = 3_402_000 + (income - 20_000_000) * 0.20
-    else:
-        tax = 9_402_000 + (income - 50_000_000) * 0.22
-    return round(tax, 2)
+    return round(_tax_by_scale(income, GENERAL_SCALE), 2)
