@@ -34,7 +34,7 @@ def test_tax_calculator():
     assert calculate_tax_bugged(2.34) == 0.351
 
 
-def tax_calculator_pesticide():
+def test_tax_calculator_pesticide():
     assert calculate_tax(1000) == 150
     assert calculate_tax(100) == 15
     assert calculate_tax(10) == 1.5
