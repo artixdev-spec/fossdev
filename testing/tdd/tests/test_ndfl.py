@@ -40,3 +40,8 @@ def test_higher_rate_applies_only_to_excess(income, expected):
 
 def test_tax_is_rounded_to_kopecks():
     assert calculate_ndfl(100.55) == 13.07
+
+
+def test_negative_income_raises():
+    with pytest.raises(ValueError):
+        calculate_ndfl(-1)
