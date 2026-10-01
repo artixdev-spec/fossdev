@@ -1,0 +1,4 @@
+setuptools
+pytest
+sphinx
+myst-parser
