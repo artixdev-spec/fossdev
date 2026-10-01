@@ -6,13 +6,24 @@ from pydantic import BaseModel, Field
 
 from order_service.clients import HttpProductClient
 from order_service.memory import InMemoryOrderRepository
-from order_service.service import ProductNotFound, create_order
+from order_service.service import OrderRepository, ProductNotFound, create_order
 
 PRODUCT_SERVICE_URL = os.getenv("PRODUCT_SERVICE_URL", "http://localhost:8001")
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+
+def make_repository() -> OrderRepository:
+    # без DATABASE_URL (локальный запуск без БД) заказы хранятся в памяти
+    if DATABASE_URL is None:
+        return InMemoryOrderRepository()
+    from order_service.repository import PostgresOrderRepository
+
+    return PostgresOrderRepository(DATABASE_URL)
+
 
 app = FastAPI(title="Order service")
 products = HttpProductClient(PRODUCT_SERVICE_URL)
-orders = InMemoryOrderRepository()
+orders = make_repository()
 
 
 class OrderIn(BaseModel):
