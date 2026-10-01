@@ -1,9 +1,10 @@
 from calc.math_demo import (
     add,
     add_with_bug,
-    calculate_tax_bugged,
     calculate_tax,
+    calculate_tax_bugged,
 )
+
 
 def test_addition():
     assert add(2, 2) == 4
