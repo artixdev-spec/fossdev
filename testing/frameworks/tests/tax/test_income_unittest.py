@@ -13,9 +13,8 @@ class TestResidence(unittest.TestCase):
 
     def test_invalid_days_raise(self):
         for days in (-1, 367):
-            with self.subTest(days=days):
-                with self.assertRaises(ValueError):
-                    is_resident(days)
+            with self.subTest(days=days), self.assertRaises(ValueError):
+                is_resident(days)
 
 
 class TestIncomeTax(unittest.TestCase):
